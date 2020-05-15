@@ -20,7 +20,7 @@ export const Content = styled.div`
   form {
     display: flex;
     flex-direction: row;
-    width: 100%;
+    /* width: 540px; */
     align-items: top;
     margin: 40px 0;
     width: 900px;

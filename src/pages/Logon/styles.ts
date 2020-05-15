@@ -56,5 +56,5 @@ export const Content = styled.div`
 export const Background = styled.div`
   flex: 1;
   background: url(${torreBackground}) no-repeat center 18vh;
-  background-size: 300px 480px;
+  background-size: 380px 480px;
 `;

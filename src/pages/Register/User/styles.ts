@@ -5,7 +5,7 @@ import { shade } from 'polished';
 
 export const Container = styled.div`
   height: 100vh;
-  display: flex;
+  /* display: flex; */
 
   img {
     height: 110px;
@@ -20,12 +20,11 @@ export const Content = styled.div`
 
   place-content: center;
 
-  width: 100%;
-  max-width: 80px;
+  margin-top: 40px;
 
   form {
-    margin: 40px 0;
-    width: 340px;
+    margin: 10px 0;
+    width: 460px;
     text-align: center;
   }
 
