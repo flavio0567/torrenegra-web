@@ -1,6 +1,10 @@
-import React from 'react';
-// import * as Yup from 'yup';
+import React, { useRef, useCallback } from 'react';
+import * as Yup from 'yup';
+
+import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
+
+import { Link } from 'react-router-dom';
 
 import {
   AiOutlineCalendar,
@@ -11,33 +15,65 @@ import { BsPerson } from 'react-icons/bs';
 import { FaRegBuilding, FaRegAddressBook } from 'react-icons/fa';
 import { MdPlace, MdDevicesOther } from 'react-icons/md';
 import { FiLogOut, FiPlus, FiBriefcase, FiFlag, FiPhone } from 'react-icons/fi';
-
 import logoImg from '../../../assets/logo.png';
+
+import { useToast } from '../../../hooks/toast';
+
+import getValidationErrors from '../../../utils/getValidationErrors';
 
 import Input from '../../../components/Input';
 import Button from '../../../components/Button';
 
 import { Container, Content, Text, Left, Side } from './styles';
 
-// const schema = Yup.object().shape({
-//   email: Yup.string()
-//     .email('email format not valid')
-//     .required('email is required'),
-//   password: Yup.string()
-//     .required('password is required')
-//     .min(6, 'password min 6 chars'),
-// });
-
 const Client: React.FC = () => {
-  function handleSubmit(data: object): void {
-    console.log(data);
-  }
+  const formRef = useRef<FormHandles>(null);
+  const { addToast } = useToast();
+
+  const handleSubmit = useCallback(async (data: object) => {
+    try {
+      const schema = Yup.object().shape({
+        cnpj: Yup.string().required(),
+        corporate_name: Yup.string().required(),
+        trading_name: Yup.string().required(),
+        address1: Yup.string().required(),
+        address2: Yup.string().required(),
+        city: Yup.string().required(),
+        state: Yup.string().required(),
+        zip_code: Yup.string().required(),
+        hourly_cost: Yup.number().required(),
+        payment_deadline: Yup.number().required(),
+        name: Yup.string().required(),
+        email: Yup.string()
+          .email('E-mail format not valid')
+          .required('E-mail is required'),
+        phone: Yup.number().required(),
+        other: Yup.string().required(),
+      });
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro no cadastro de clientes',
+        description: 'Ocorreu erro ao cadastrar o cliente, tente novamente.',
+      });
+    }
+  }, []);
 
   return (
     <Container>
       <img src={logoImg} alt="Torrenegra" />
       <Content>
-        <Form onSubmit={handleSubmit}>
+        <Form ref={formRef} onSubmit={handleSubmit}>
           <Left>
             <h1>Dados básicos</h1>
             <Input name="cnpj" icon={FaRegBuilding} placeholder="Cnpj" />
@@ -87,10 +123,10 @@ const Client: React.FC = () => {
               <h4>Contato principal</h4>
             </Text>
             <Button type="submit">Confirmar</Button>
-            <a href="/">
+            <Link to="/">
               <FiLogOut />
               Sair
-            </a>
+            </Link>
           </Side>
         </Form>
         <div>

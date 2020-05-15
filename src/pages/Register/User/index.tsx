@@ -4,14 +4,18 @@ import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 
+import { Link } from 'react-router-dom';
+
 import {
   AiOutlineMail,
   AiOutlineLock,
   AiOutlineDollarCircle,
 } from 'react-icons/ai';
 import { BsPerson, BsPersonPlus } from 'react-icons/bs';
-import { IoMdExit } from 'react-icons/io';
+import { FiLogOut } from 'react-icons/fi';
 import { FaHatCowboy } from 'react-icons/fa';
+
+import { useToast } from '../../../hooks/toast';
 
 import getValidationErrors from '../../../utils/getValidationErrors';
 import logoImg from '../../../assets/logo.png';
@@ -23,6 +27,7 @@ import { Container, Content, Text } from './styles';
 
 const User: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
+  const { addToast } = useToast();
 
   const handleSubmit = useCallback(async (data: object) => {
     try {
@@ -45,9 +50,17 @@ const User: React.FC = () => {
         abortEarly: false,
       });
     } catch (err) {
-      const errors = getValidationErrors(err);
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
 
-      formRef.current?.setErrors(errors);
+        formRef.current?.setErrors(errors);
+      }
+
+      addToast({
+        type: 'error',
+        title: 'Erro no cadastro de usuário',
+        description: 'Ocorreu erro ao cadastrar o usuário, tente novamente.',
+      });
     }
   }, []);
 
@@ -79,10 +92,10 @@ const User: React.FC = () => {
           <Button type="submit">Cadastrar</Button>
         </Form>
 
-        <a href="/">
-          <IoMdExit />
+        <Link to="/">
+          <FiLogOut />
           Sair
-        </a>
+        </Link>
       </Content>
     </Container>
   );
