@@ -29,40 +29,43 @@ const User: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
-  const handleSubmit = useCallback(async (data: object) => {
-    try {
-      formRef.current?.setErrors({});
+  const handleSubmit = useCallback(
+    async (data: object) => {
+      try {
+        formRef.current?.setErrors({});
 
-      const schema = Yup.object().shape({
-        first_name: Yup.string().min(2, 'First name min 2 chars'),
-        last_name: Yup.string().min(2, 'Last name min 2 chars'),
-        email: Yup.string()
-          .email('E-mail format not valid')
-          .required('E-mail is required'),
-        position: Yup.string()
-          .required('Position is required')
-          .min(6, 'Last name min 6 chars'),
-        hourly_cost: Yup.string().required('Hourly cost is required'),
-        password: Yup.string().min(6, 'Password min 6 chars'),
-      });
+        const schema = Yup.object().shape({
+          first_name: Yup.string().min(2, 'First name min 2 chars'),
+          last_name: Yup.string().min(2, 'Last name min 2 chars'),
+          email: Yup.string()
+            .email('E-mail format not valid')
+            .required('E-mail is required'),
+          position: Yup.string()
+            .required('Position is required')
+            .min(6, 'Last name min 6 chars'),
+          hourly_cost: Yup.string().required('Hourly cost is required'),
+          password: Yup.string().min(6, 'Password min 6 chars'),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+          formRef.current?.setErrors(errors);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro no cadastro de usuário',
+          description: 'Ocorreu erro ao cadastrar o usuário, tente novamente.',
+        });
       }
-
-      addToast({
-        type: 'error',
-        title: 'Erro no cadastro de usuário',
-        description: 'Ocorreu erro ao cadastrar o usuário, tente novamente.',
-      });
-    }
-  }, []);
+    },
+    [addToast],
+  );
 
   return (
     <Container>

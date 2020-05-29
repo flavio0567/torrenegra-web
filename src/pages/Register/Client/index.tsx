@@ -30,44 +30,47 @@ const Client: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const { addToast } = useToast();
 
-  const handleSubmit = useCallback(async (data: object) => {
-    try {
-      const schema = Yup.object().shape({
-        cnpj: Yup.string().required(),
-        corporate_name: Yup.string().required(),
-        trading_name: Yup.string().required(),
-        address1: Yup.string().required(),
-        address2: Yup.string().required(),
-        city: Yup.string().required(),
-        state: Yup.string().required(),
-        zip_code: Yup.string().required(),
-        hourly_cost: Yup.number().required(),
-        payment_deadline: Yup.number().required(),
-        name: Yup.string().required(),
-        email: Yup.string()
-          .email('E-mail format not valid')
-          .required('E-mail is required'),
-        phone: Yup.number().required(),
-        other: Yup.string().required(),
-      });
+  const handleSubmit = useCallback(
+    async (data: object) => {
+      try {
+        const schema = Yup.object().shape({
+          cnpj: Yup.string().required(),
+          corporate_name: Yup.string().required(),
+          trading_name: Yup.string().required(),
+          address1: Yup.string().required(),
+          address2: Yup.string().required(),
+          city: Yup.string().required(),
+          state: Yup.string().required(),
+          zip_code: Yup.string().required(),
+          hourly_cost: Yup.number().required(),
+          payment_deadline: Yup.number().required(),
+          name: Yup.string().required(),
+          email: Yup.string()
+            .email('E-mail format not valid')
+            .required('E-mail is required'),
+          phone: Yup.number().required(),
+          other: Yup.string().required(),
+        });
 
-      await schema.validate(data, {
-        abortEarly: false,
-      });
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
+        await schema.validate(data, {
+          abortEarly: false,
+        });
+      } catch (err) {
+        if (err instanceof Yup.ValidationError) {
+          const errors = getValidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+          formRef.current?.setErrors(errors);
+        }
+
+        addToast({
+          type: 'error',
+          title: 'Erro no cadastro de clientes',
+          description: 'Ocorreu erro ao cadastrar o cliente, tente novamente.',
+        });
       }
-
-      addToast({
-        type: 'error',
-        title: 'Erro no cadastro de clientes',
-        description: 'Ocorreu erro ao cadastrar o cliente, tente novamente.',
-      });
-    }
-  }, []);
+    },
+    [addToast],
+  );
 
   return (
     <Container>
